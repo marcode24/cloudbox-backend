@@ -1,0 +1,22 @@
+{
+  "name": "cloudbox-backend-api",
+  "version": "1.0.0",
+  "description": "Cloudbox Backend API",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "backend"
+  ],
+  "author": "Marco Cruz",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
+  }
+}

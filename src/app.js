@@ -1,10 +1,14 @@
 import express from 'express';
-import dotenv from 'dotenv';
+import fileRouter from './routes/file.js';
 
-dotenv.config();
 const app = express();
 
 app.use(express.json());
+
+const PREFIX = '/api/v1';
+
+// ROUTES
+app.use(`${PREFIX}/file`, fileRouter);
 
 app.get('/', (_, res) => {
   res.send('CloudBox server is running');

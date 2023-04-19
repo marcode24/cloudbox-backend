@@ -9,7 +9,8 @@
     "start:dev": "nodemon src/index.js",
     "lint": "eslint . --ext .js --color",
     "lint:fix": "npm run lint -- --fix",
-    "lint:watch": "npm run lint -- --watch"
+    "lint:watch": "npm run lint -- --watch",
+    "prepare": "husky install"
   },
   "keywords": [
     "node",
@@ -25,6 +26,8 @@
   "devDependencies": {
     "eslint": "^8.38.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5"
+    "eslint-plugin-import": "^2.27.5",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.1"
   }
 }

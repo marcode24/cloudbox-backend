@@ -5,6 +5,10 @@ const fileSchema = new Schema({
     type: String,
     required: true,
   },
+  cloudName: {
+    type: String,
+    required: true,
+  },
   size: {
     type: Number,
     default: 0,

@@ -9,8 +9,11 @@ const blobService = BlobServiceClient.fromConnectionString(
   azureStorageConnectionString,
 );
 
-const upload = async (containerName, files) => {
+const uploadCloud = async (containerName, files) => {
   const containerClient = blobService.getContainerClient(containerName);
+  if (!(await containerClient.exists())) {
+    await containerClient.create();
+  }
   const uploadPromises = files.map((file) => {
     const blockBlobClient = containerClient.getBlockBlobClient(file.name);
     return blockBlobClient.uploadData(file);
@@ -19,4 +22,4 @@ const upload = async (containerName, files) => {
   return uploadResponses;
 };
 
-export default upload;
+export default uploadCloud;

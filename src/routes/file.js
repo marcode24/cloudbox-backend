@@ -1,8 +1,12 @@
 import { Router } from 'express';
 import multer from 'multer';
-import { uploadFile } from '../controllers/file.js';
 
-const upload = multer({
+import { uploadFiles } from '../controllers/file.js';
+
+import validateJWT from '../middlewares/jwt.js';
+import { validateFolderID } from '../middlewares/fields.js';
+
+const uploadConfig = multer({
   limits: {
     fileSize: 1000000, // 1MB
   },
@@ -20,6 +24,16 @@ const emptyFileErrorHandler = (req, res, next) => {
 
 const fileRouter = Router();
 
-fileRouter.post('/upload', upload, emptyFileErrorHandler, fileSizeLimitErrorHandler, uploadFile);
+fileRouter.post(
+  '/upload/:currentFolderId',
+  [
+    validateJWT,
+    uploadConfig,
+    emptyFileErrorHandler,
+    fileSizeLimitErrorHandler,
+    validateFolderID,
+  ],
+  uploadFiles,
+);
 
 export default fileRouter;

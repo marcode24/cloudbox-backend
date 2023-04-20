@@ -1,9 +1,27 @@
-import upload from '../utils/blob.js';
+import uploadCloud from '../utils/blob.js';
 
-const CONTAINER_NAME = 'files';
+import Folder from '../models/folder.js';
+import File from '../models/file.js';
 
-export const uploadFile = async (req, res) => {
+export const uploadFiles = async (req, res) => {
   try {
+    const { currentFolderId } = req.params;
+    const { id } = req;
+
+    const currentFolder = await Folder.findById(currentFolderId);
+    if (!currentFolder) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'folder not found',
+      });
+    }
+    if (currentFolder.owner.toString() !== id) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'you are not authorized to upload files here',
+      });
+    }
+
     const { files } = req;
     files.map((file) => {
       const fileSplit = file.originalname.split('.');
@@ -12,10 +30,27 @@ export const uploadFile = async (req, res) => {
       file.name = `${fileName}_${Date.now()}.${extension}`;
       return file;
     });
-    await upload(CONTAINER_NAME, files);
-    res.status(200).json({ message: 'Files uploaded successfully' });
+    await uploadCloud(id, files);
+
+    const newFilesPromises = files.map((file) => {
+      const newFile = new File({
+        name: file.originalname,
+        cloudName: file.name,
+        owner: id,
+        folder: currentFolderId,
+        size: file.size,
+      });
+      return newFile.save();
+    });
+
+    const newFiles = await Promise.all(newFilesPromises);
+
+    currentFolder.files.push(...newFiles.map((file) => file.id));
+    await currentFolder.save();
+
+    return res.status(200).json({ message: 'Files uploaded successfully' });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 };
 

@@ -1,9 +1,12 @@
 import { BlobServiceClient } from '@azure/storage-blob';
 import dotenv from 'dotenv';
+import config from '../env/config.js';
 
+const { azureStorageConnectionString } = config;
 dotenv.config();
+
 const blobService = BlobServiceClient.fromConnectionString(
-  process.env.AZURE_STORAGE_CONNECTION_STRING,
+  azureStorageConnectionString,
 );
 
 const upload = async (containerName, files) => {

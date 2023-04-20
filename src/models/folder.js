@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-const fileSchema = new Schema({
+const folderSchema = new Schema({
   name: {
     type: String,
     required: true,
@@ -41,12 +41,20 @@ const fileSchema = new Schema({
     type: Date,
     default: new Date(),
   },
-  folder: {
+  parent: {
     type: Schema.Types.ObjectId,
     ref: 'Folder',
   },
+  folders: [{
+    type: Schema.Types.ObjectId,
+    ref: 'Folder',
+  }],
+  files: [{
+    type: Schema.Types.ObjectId,
+    ref: 'File',
+  }],
 });
 
-const File = model('File', fileSchema);
+const Folder = model('Folder', folderSchema);
 
-export default File;
+export default Folder;

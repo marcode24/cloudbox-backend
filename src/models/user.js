@@ -36,6 +36,10 @@ const userSchema = new Schema({
     type: Date,
     default: new Date(),
   },
+  rootFolder: {
+    type: Schema.Types.ObjectId,
+    ref: 'Folder',
+  },
 });
 
 const User = model('User', userSchema);

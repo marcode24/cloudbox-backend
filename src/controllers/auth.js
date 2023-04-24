@@ -41,4 +41,27 @@ export const login = async (req, res) => {
   }
 };
 
-export const renewToken = 'comming soon';
+export const renewToken = async (req, res) => {
+  try {
+    const { id } = req;
+    const [token, userData] = await Promise.all([
+      generateJWT(id),
+      User.findById(id, '-password'),
+    ]);
+    const rootFolder = await Folder.findById(userData.rootFolder)
+      .populate({ path: 'folders', options: { sort: { name: 1 } } })
+      .populate({ path: 'files', options: { sort: { name: 1 } } });
+
+    return res.status(200).json({
+      ok: true,
+      user: userData,
+      token,
+      root: rootFolder,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      msg: 'Something went wrong',
+    });
+  }
+};

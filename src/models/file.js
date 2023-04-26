@@ -13,6 +13,10 @@ const fileSchema = new Schema({
     type: Number,
     default: 0,
   },
+  type: {
+    type: String,
+    default: 'file',
+  },
   permission: [{
     user: {
       type: Schema.Types.ObjectId,

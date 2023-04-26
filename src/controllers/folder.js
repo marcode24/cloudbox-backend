@@ -2,7 +2,7 @@ import Folder from '../models/folder.js';
 
 export const create = async (req, res) => {
   try {
-    const { currentFolderId } = req.params;
+    const { folderId: currentFolderId } = req.params;
     const parentFolder = await Folder.findById(currentFolderId);
     if (!parentFolder) {
       return res.status(404).json({
@@ -44,4 +44,26 @@ export const create = async (req, res) => {
   }
 };
 
-export const w = 0;
+export const getFolder = async (req, res) => {
+  try {
+    const { folderId } = req.params;
+    const folder = await Folder.findById(folderId)
+      .populate({ path: 'folders', options: { sort: { name: 1 } } })
+      .populate({ path: 'files', options: { sort: { name: 1 } } });
+    if (!folder) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'folder not found',
+      });
+    }
+    return res.status(200).json({
+      ok: true,
+      folder,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      msg: 'Something went wrong',
+    });
+  }
+};

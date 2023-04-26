@@ -24,8 +24,8 @@ export const validateLogin = (req, res, next) => {
 };
 
 export const validateFolderID = (req, res, next) => {
-  const { currentFolderId } = req.params;
-  if (!currentFolderId || !isMongoId(currentFolderId)) {
+  const { folderId } = req.params;
+  if (!folderId || !isMongoId(folderId)) {
     return res.status(400).json({
       ok: false,
       msg: 'Must provide a valid folder ID',

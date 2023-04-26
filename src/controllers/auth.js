@@ -49,8 +49,8 @@ export const renewToken = async (req, res) => {
       User.findById(id, '-password'),
     ]);
     const rootFolder = await Folder.findById(userData.rootFolder)
-      .populate({ path: 'folders', options: { sort: { name: 1 } } })
-      .populate({ path: 'files', options: { sort: { name: 1 } } });
+      .populate({ path: 'folders', options: { sort: { name: 1 }, collation: { locale: 'en' } } })
+      .populate({ path: 'files', options: { sort: { name: 1 }, collation: { locale: 'en' } } });
 
     return res.status(200).json({
       ok: true,

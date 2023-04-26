@@ -48,8 +48,8 @@ export const getFolder = async (req, res) => {
   try {
     const { folderId } = req.params;
     const folder = await Folder.findById(folderId)
-      .populate({ path: 'folders', options: { sort: { name: 1 } } })
-      .populate({ path: 'files', options: { sort: { name: 1 } } });
+      .populate({ path: 'folders', options: { sort: { name: 1 }, collation: { locale: 'en' } } })
+      .populate({ path: 'files', options: { sort: { name: 1 }, collation: { locale: 'en' } } });
     if (!folder) {
       return res.status(404).json({
         ok: false,

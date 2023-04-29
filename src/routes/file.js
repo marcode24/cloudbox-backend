@@ -6,11 +6,13 @@ import { uploadFiles } from '../controllers/file.js';
 import validateJWT from '../middlewares/jwt.js';
 import { validateFolderID } from '../middlewares/fields.js';
 
+const LIMIT_FILE_SIZE = 2000000; // 2MB
+
 const uploadConfig = multer({
   limits: {
-    fileSize: 1000000, // 1MB
+    fileSize: LIMIT_FILE_SIZE,
   },
-}).array('file', 5);
+}).array('file');
 
 const fileSizeLimitErrorHandler = (err, _, res, next) => {
   err.code === 'LIMIT_FILE_SIZE'
@@ -25,7 +27,7 @@ const emptyFileErrorHandler = (req, res, next) => {
 const fileRouter = Router();
 
 fileRouter.post(
-  '/upload/:currentFolderId',
+  '/upload/:folderId',
   [
     validateJWT,
     uploadConfig,

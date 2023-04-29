@@ -5,10 +5,10 @@ import File from '../models/file.js';
 
 export const uploadFiles = async (req, res) => {
   try {
-    const { currentFolderId } = req.params;
+    const { folderId } = req.params;
     const { id } = req;
 
-    const currentFolder = await Folder.findById(currentFolderId);
+    const currentFolder = await Folder.findById(folderId);
     if (!currentFolder) {
       return res.status(404).json({
         ok: false,
@@ -21,7 +21,6 @@ export const uploadFiles = async (req, res) => {
         msg: 'you are not authorized to upload files here',
       });
     }
-
     const { files } = req;
     files.map((file) => {
       const fileSplit = file.originalname.split('.');
@@ -37,18 +36,21 @@ export const uploadFiles = async (req, res) => {
         name: file.originalname,
         cloudName: file.name,
         owner: id,
-        folder: currentFolderId,
+        folder: folderId,
         size: file.size,
       });
       return newFile.save();
     });
 
     const newFiles = await Promise.all(newFilesPromises);
-
     currentFolder.files.push(...newFiles.map((file) => file.id));
     await currentFolder.save();
 
-    return res.status(200).json({ message: 'Files uploaded successfully' });
+    return res.status(200).json({
+      ok: true,
+      msg: 'Files uploaded successfully',
+      files: newFiles,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

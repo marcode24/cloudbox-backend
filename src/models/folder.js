@@ -10,6 +10,10 @@ const folderSchema = new Schema({
     type: Number,
     default: 0,
   },
+  type: {
+    type: String,
+    default: 'folder',
+  },
   permission: [{
     user: {
       type: Schema.Types.ObjectId,

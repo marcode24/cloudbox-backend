@@ -1,4 +1,4 @@
-import uploadCloud from '../utils/blob.js';
+import { downloadCloud, uploadCloud } from '../utils/blob.js';
 
 import Folder from '../models/folder.js';
 import File from '../models/file.js';
@@ -38,6 +38,7 @@ export const uploadFiles = async (req, res) => {
         owner: id,
         folder: folderId,
         size: file.size,
+        mimeType: file.mimetype,
       });
       return newFile.save();
     });
@@ -56,4 +57,28 @@ export const uploadFiles = async (req, res) => {
   }
 };
 
-export const w = 0;
+export const downloadFile = async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const { id } = req;
+    const file = await File.findById(fileId);
+    if (!file) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'file not found',
+      });
+    }
+    if (file.owner.toString() !== id) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'you are not authorized to download this file',
+      });
+    }
+    const buffer = await downloadCloud(id, file.cloudName);
+    res.setHeader('Content-Type', file.mimeType);
+    res.setHeader('Content-Disposition', `attachment; filename=${file.name}`);
+    return res.send(buffer);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};

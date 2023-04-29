@@ -1,9 +1,9 @@
 import { Router } from 'express';
 
-import { uploadFiles } from '../controllers/file.js';
+import { downloadFile, uploadFiles } from '../controllers/file.js';
 
 import validateJWT from '../middlewares/jwt.js';
-import { validateFolderID } from '../middlewares/fields.js';
+import { validateFileID, validateFolderID } from '../middlewares/fields.js';
 import {
   emptyFileErrorHandler,
   fileSizeLimitErrorHandler,
@@ -22,6 +22,15 @@ fileRouter.post(
     validateFolderID,
   ],
   uploadFiles,
+);
+
+fileRouter.get(
+  '/download/:fileId',
+  [
+    validateJWT,
+    validateFileID,
+  ],
+  downloadFile,
 );
 
 export default fileRouter;

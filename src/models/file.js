@@ -53,6 +53,10 @@ const fileSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Folder',
   },
+  mimeType: {
+    type: String,
+    required: true,
+  },
 });
 
 const File = model('File', fileSchema);

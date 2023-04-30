@@ -1,4 +1,5 @@
 import Folder from '../models/folder.js';
+import buildBreadcrumb from '../utils/breadcrumb.js';
 
 export const create = async (req, res) => {
   try {
@@ -56,9 +57,17 @@ export const getFolder = async (req, res) => {
         msg: 'folder not found',
       });
     }
+    if (folder.owner.toString() !== req.id) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'you are not authorized to get this folder',
+      });
+    }
+    const breadcrumb = await buildBreadcrumb(folderId);
     return res.status(200).json({
       ok: true,
       folder,
+      breadcrumb: breadcrumb.reverse(),
     });
   } catch (error) {
     return res.status(500).json({

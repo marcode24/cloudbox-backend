@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { create, getFolder } from '../controllers/folder.js';
+import { create, getFolder, updateFolder } from '../controllers/folder.js';
 
 import validateJWT from '../middlewares/jwt.js';
 import { validateFolderID } from '../middlewares/fields.js';
@@ -12,6 +12,15 @@ folderRouter.post(
   validateJWT,
   validateFolderID,
   create,
+);
+
+folderRouter.patch(
+  '/update/:folderId',
+  [
+    validateJWT,
+    validateFolderID,
+  ],
+  updateFolder,
 );
 
 folderRouter.get(

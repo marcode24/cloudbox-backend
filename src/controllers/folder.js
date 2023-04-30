@@ -67,3 +67,36 @@ export const getFolder = async (req, res) => {
     });
   }
 };
+
+export const updateFolder = async (req, res) => {
+  try {
+    const { name, color } = req.body;
+    const { folderId } = req.params;
+    const folder = await Folder.findById(folderId);
+    if (!folder) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'folder not found',
+      });
+    }
+    if (folder.owner.toString() !== req.id) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'you are not authorized to update this folder',
+      });
+    }
+    folder.name = name || folder.name;
+    folder.color = color || folder.color;
+    const folderUpdated = await folder.save();
+    return res.status(200).json({
+      ok: true,
+      msg: 'folder updated correctly',
+      folder: folderUpdated,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      ok: false,
+      msg: 'Something went wrong',
+    });
+  }
+};

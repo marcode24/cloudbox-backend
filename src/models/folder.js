@@ -14,6 +14,10 @@ const folderSchema = new Schema({
     type: String,
     default: 'folder',
   },
+  color: {
+    type: String,
+    default: '#FF8550',
+  },
   permission: [{
     user: {
       type: Schema.Types.ObjectId,

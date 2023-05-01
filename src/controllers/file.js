@@ -2,6 +2,7 @@ import { downloadCloud, uploadCloud } from '../utils/blob.js';
 
 import Folder from '../models/folder.js';
 import File from '../models/file.js';
+import User from '../models/user.js';
 
 export const uploadFiles = async (req, res) => {
   try {
@@ -21,7 +22,20 @@ export const uploadFiles = async (req, res) => {
         msg: 'you are not authorized to upload files here',
       });
     }
+    const user = await User.findById(id);
+    // eslint-disable-next-line prefer-const
+    let { usedSpace, totalSpace } = user;
     const { files } = req;
+    const total = files.reduce((acc, file) => acc + file.size, 0);
+    const availableSpace = totalSpace - usedSpace;
+    if (total > availableSpace) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'you do not have enough space',
+      });
+    }
+    user.usedSpace += total;
+    user.updatedAt = new Date();
     files.map((file) => {
       const fileSplit = file.originalname.split('.');
       const extension = fileSplit.pop();
@@ -30,7 +44,6 @@ export const uploadFiles = async (req, res) => {
       return file;
     });
     await uploadCloud(id, files);
-
     const newFilesPromises = files.map((file) => {
       const newFile = new File({
         name: file.originalname,
@@ -44,8 +57,12 @@ export const uploadFiles = async (req, res) => {
     });
 
     const newFiles = await Promise.all(newFilesPromises);
+
     currentFolder.files.push(...newFiles.map((file) => file.id));
-    await currentFolder.save();
+    await Promise.all([
+      currentFolder.save(),
+      user.save(),
+    ]);
 
     return res.status(200).json({
       ok: true,

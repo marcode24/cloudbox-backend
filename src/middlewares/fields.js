@@ -33,3 +33,14 @@ export const validateFolderID = (req, res, next) => {
   }
   return next();
 };
+
+export const validateFileID = (req, res, next) => {
+  const { fileId } = req.params;
+  if (!fileId || !isMongoId(fileId)) {
+    return res.status(400).json({
+      ok: false,
+      msg: 'Must provide a valid file ID',
+    });
+  }
+  return next();
+};

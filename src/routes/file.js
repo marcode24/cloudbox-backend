@@ -1,28 +1,14 @@
 import { Router } from 'express';
-import multer from 'multer';
 
-import { uploadFiles } from '../controllers/file.js';
+import { downloadFile, uploadFiles } from '../controllers/file.js';
 
 import validateJWT from '../middlewares/jwt.js';
-import { validateFolderID } from '../middlewares/fields.js';
-
-const LIMIT_FILE_SIZE = 2000000; // 2MB
-
-const uploadConfig = multer({
-  limits: {
-    fileSize: LIMIT_FILE_SIZE,
-  },
-}).array('file');
-
-const fileSizeLimitErrorHandler = (err, _, res, next) => {
-  err.code === 'LIMIT_FILE_SIZE'
-    ? res.status(400).json({ message: 'File size limit exceeded' })
-    : next();
-};
-
-const emptyFileErrorHandler = (req, res, next) => {
-  req.files.length > 0 ? next() : res.status(400).json({ message: 'No file uploaded' });
-};
+import { validateFileID, validateFolderID } from '../middlewares/fields.js';
+import {
+  emptyFileErrorHandler,
+  fileSizeLimitErrorHandler,
+  uploadConfig,
+} from '../middlewares/multer.js';
 
 const fileRouter = Router();
 
@@ -36,6 +22,15 @@ fileRouter.post(
     validateFolderID,
   ],
   uploadFiles,
+);
+
+fileRouter.get(
+  '/download/:fileId',
+  [
+    validateJWT,
+    validateFileID,
+  ],
+  downloadFile,
 );
 
 export default fileRouter;

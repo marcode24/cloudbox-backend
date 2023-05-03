@@ -40,6 +40,14 @@ const userSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Folder',
   },
+  totalSpace: {
+    type: Number,
+    default: 52428800, // 50MB
+  },
+  usedSpace: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const User = model('User', userSchema);

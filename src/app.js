@@ -8,7 +8,7 @@ import authRouter from './routes/auth.js';
 
 const corsOptions = {
   origin: ['http://localhost:4200'],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
 };
 
 const app = express();

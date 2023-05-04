@@ -1,4 +1,4 @@
-import { downloadCloud, uploadCloud } from '../utils/blob.js';
+import { deleteCloud, downloadCloud, uploadCloud } from '../utils/blob.js';
 
 import Folder from '../models/folder.js';
 import File from '../models/file.js';
@@ -95,6 +95,51 @@ export const downloadFile = async (req, res) => {
     res.setHeader('Content-Type', file.mimeType);
     res.setHeader('Content-Disposition', `attachment; filename=${file.name}`);
     return res.send(buffer);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const deleteFile = async (req, res) => {
+  try {
+    const { fileId } = req.params;
+    const file = await File.findById(fileId);
+    if (!file) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'file not found',
+      });
+    }
+    const { id } = req;
+    if (file.owner.toString() !== id) {
+      return res.status(401).json({
+        ok: false,
+        msg: 'you are not authorized to delete this file',
+      });
+    }
+    const { succeeded } = await deleteCloud(id, file.cloudName);
+    if (!succeeded) {
+      return res.status(404).json({
+        ok: false,
+        msg: 'file not found in cloud',
+
+      });
+    }
+    const folder = await Folder.findById(file.folder);
+    folder.files = folder.files.filter((fileInside) => fileInside.toString() !== fileId);
+    const user = await User.findById(id);
+    user.usedSpace -= file.size;
+    user.updatedAt = new Date();
+    await Promise.all([
+      folder.save(),
+      File.deleteOne({ _id: fileId }),
+      user.save(),
+    ]);
+    return res.status(200).json({
+      ok: true,
+      msg: 'file deleted successfully',
+      file,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

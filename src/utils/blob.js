@@ -28,3 +28,10 @@ export const downloadCloud = async (containerName, fileName) => {
   const buffer = await blobClient.downloadToBuffer();
   return buffer;
 };
+
+export const deleteCloud = async (containerName, fileName) => {
+  const containerClient = blobService.getContainerClient(containerName);
+  const blobClient = containerClient.getBlobClient(fileName);
+  const response = await blobClient.deleteIfExists();
+  return response;
+};

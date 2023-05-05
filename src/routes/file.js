@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { downloadFile, uploadFiles } from '../controllers/file.js';
+import { deleteFile, downloadFile, uploadFiles } from '../controllers/file.js';
 
 import validateJWT from '../middlewares/jwt.js';
 import { validateFileID, validateFolderID } from '../middlewares/fields.js';
@@ -22,6 +22,15 @@ fileRouter.post(
     validateFolderID,
   ],
   uploadFiles,
+);
+
+fileRouter.delete(
+  '/:fileId',
+  [
+    validateJWT,
+    validateFileID,
+  ],
+  deleteFile,
 );
 
 fileRouter.get(

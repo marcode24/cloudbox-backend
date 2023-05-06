@@ -7,7 +7,7 @@ import folderRouter from './routes/folder.js';
 import authRouter from './routes/auth.js';
 
 const corsOptions = {
-  origin: ['http://localhost:4200'],
+  origin: ['http://localhost:4200', 'https://cloudbox-m.netlify.app'],
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'OPTIONS', 'DELETE'],
 };
 

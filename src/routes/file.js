@@ -1,6 +1,8 @@
 import { Router } from 'express';
 
-import { deleteFile, downloadFile, uploadFiles } from '../controllers/file.js';
+import {
+  deleteFile, downloadFile, searchFiles, uploadFiles,
+} from '../controllers/file.js';
 
 import validateJWT from '../middlewares/jwt.js';
 import { validateFileID, validateFolderID } from '../middlewares/fields.js';
@@ -31,6 +33,14 @@ fileRouter.delete(
     validateFileID,
   ],
   deleteFile,
+);
+
+fileRouter.get(
+  '/search',
+  [
+    validateJWT,
+  ],
+  searchFiles,
 );
 
 fileRouter.get(

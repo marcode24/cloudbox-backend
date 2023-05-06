@@ -3,6 +3,7 @@ import { deleteCloud, downloadCloud, uploadCloud } from '../utils/blob.js';
 import Folder from '../models/folder.js';
 import File from '../models/file.js';
 import User from '../models/user.js';
+import buildPath from '../utils/path.js';
 
 export const uploadFiles = async (req, res) => {
   try {
@@ -139,6 +140,37 @@ export const deleteFile = async (req, res) => {
       ok: true,
       msg: 'file deleted successfully',
       file,
+    });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const searchFiles = async (req, res) => {
+  try {
+    const { id } = req;
+    const { q } = req.query;
+    if (!q) {
+      return res.status(400).json({
+        ok: false,
+        msg: 'query param is required',
+      });
+    }
+    const files = await File.find({
+      owner: id,
+      name: { $regex: q, $options: 'i' },
+    });
+
+    const filesWithPathPromises = files.map(async (file) => {
+      const path = await buildPath(file.folder);
+      return { ...file._doc, path: path.reverse() };
+    });
+
+    const filesWithPath = await Promise.all(filesWithPathPromises);
+
+    return res.status(200).json({
+      ok: true,
+      files: filesWithPath,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

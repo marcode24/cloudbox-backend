@@ -1,7 +1,9 @@
 {
-  "name": "cloudbox-backend-api",
+  "name": "cloudbox-backend",
   "version": "1.0.0",
-  "description": "Cloudbox Backend API",
+  "description": "This is a simple cloud storage service that allows users to upload and download files. Here you can also create folders and subfolders to organize your files",
+  "author": "Marco Cruz - marcode24",
+  "license": "MIT",
   "main": "index.js",
   "type": "module",
   "scripts": {
@@ -12,13 +14,6 @@
     "lint:watch": "npm run lint -- --watch",
     "prepare": "husky install"
   },
-  "keywords": [
-    "node",
-    "express",
-    "backend"
-  ],
-  "author": "Marco Cruz",
-  "license": "ISC",
   "dependencies": {
     "@azure/storage-blob": "^12.14.0",
     "bcrypt": "^5.1.0",
@@ -36,5 +31,27 @@
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.3",
     "lint-staged": "^13.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/marcode24/cloudbox-backend",
+    "directory": "cloudbox-backend"
+  },
+  "bugs": {
+    "url": "git+https://github.com/marcode24/cloudbox-backend/issues"
+  },
+  "homepage": "https://github.com/marcode24/cloudbox-backend#readme",
+  "keywords": [
+    "node",
+    "express",
+    "backend",
+    "cloud",
+    "storage",
+    "service",
+    "azure",
+    "blob",
+    "mongodb",
+    "mongoose",
+    "jwt"
+  ]
 }
